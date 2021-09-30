@@ -1,12 +1,14 @@
 require('dotenv').config()
 // async errors
+require('express-async-errors')
 
 const express = require('express')
 const app = express()
 const connectDB = require('./db/connect')
+const productsRouter = require('./routes/products')
 const notFoundMiddleware = require('./middleware/not-found')
 const errorMiddleware = require('./middleware/error-handler')
-const port  =process.env.PORt || 3000
+const port = process.env.PORt || 5000
 
 // middleware
 app.use(express.json())
@@ -15,6 +17,8 @@ app.use(express.json())
 app.get('/', (req, res) => {
     res.send('Sample route')
 })
+
+app.use('/api/v1/products', productsRouter)
 
 // product route
 
@@ -39,5 +43,3 @@ process.on('uncaughtException', (err, promise) => {
     console.log(`Logged Error: ${err}`)
     server.close(() => process.exit(1))
 })
-
-
