@@ -8,7 +8,9 @@ const connectDB = require('./db/connect')
 const productsRouter = require('./routes/products')
 const notFoundMiddleware = require('./middleware/not-found')
 const errorMiddleware = require('./middleware/error-handler')
-const port = process.env.PORt || 5000
+// connect ot database
+connectDB()
+const PORT = process.env.PORT || 3000
 
 // middleware
 app.use(express.json())
@@ -20,26 +22,14 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1/products', productsRouter)
 
-// product route
-
-
 app.use(notFoundMiddleware)
 app.use(errorMiddleware)
 
-const server = async () => {
-    try {
-        await connectDB(process.env.MONGO_URL)
-        app.listen(port, () => {
-            console.log(`Connected to DB and listening on port ${port}...`)
-        })
-    } catch (err) {
-        console.error(err)
-    }
-}
+const server = app.listen(PORT, () => {
+    console.log(`listening on port ${PORT}`)
+})
 
-server()
-
-process.on('uncaughtException', (err, promise) => {
+process.on('unhandledRejection', (err, promise) => {
     console.log(`Logged Error: ${err}`)
     server.close(() => process.exit(1))
 })
